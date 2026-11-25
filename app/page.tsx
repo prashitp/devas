@@ -1,8 +1,9 @@
-
+"use client";
+import { useState } from "react";
 import {
   ArrowUpRight, CalendarDays, Check,
   Building2, Paintbrush, Hammer, Sparkles,
-  Menu, Wrench, ClipboardCheck
+  Menu, Wrench, ClipboardCheck, X
 } from "lucide-react";
 import Link from "next/link";
 
@@ -49,15 +50,23 @@ const reasons = [
 ];
 
 export default function HomePage() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
-    <main className="overflow-hidden bg-[#f7f7f2] text-[#182a22]">
-      {/* NAVIGATION */}
-      <header className="relative z-20 border-b border-[#182a22]/10 bg-[#f7f7f2]">
+    <main className="overflow-x-clip bg-[#f7f7f2] text-[#182a22]">
+      <header className="sticky top-0 z-50 border-b border-[#182a22]/10 bg-[#f7f7f2]">
         <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-5 lg:px-12">
-          <Link href="/" className="flex items-center gap-3">
+
+          {/* LOGO */}
+          <Link
+            href="/"
+            onClick={() => setMenuOpen(false)}
+            className="relative z-[60] flex items-center gap-3"
+          >
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#c9ed72]">
               <Sparkles size={22} />
             </div>
+
             <div>
               <div className="text-xl font-black tracking-tight">
                 DEVAS<span className="text-[#759d42]"> GROUP</span>
@@ -68,29 +77,79 @@ export default function HomePage() {
             </div>
           </Link>
 
+          {/* DESKTOP NAVIGATION */}
           <nav className="hidden items-center gap-8 text-sm font-semibold lg:flex">
-            <a href="#services" className="hover:text-[#759d42]">Services</a>
-            <a href="#about" className="hover:text-[#759d42]">About Us</a>
-            <a href="#process" className="hover:text-[#759d42]">How It Works</a>
-            <a href="#contact" className="hover:text-[#759d42]">Contact</a>
+            <a href="#services">Services</a>
+            <a href="#about">About Us</a>
+            <a href="#process">How It Works</a>
+            <a href="#contact">Contact</a>
           </nav>
 
+          {/* DESKTOP BUTTONS */}
           <div className="hidden items-center gap-3 lg:flex">
-            <a href="/availability"
-              className="rounded-full border border-[#182a22]/25 px-5 py-3 text-sm font-bold transition hover:bg-[#182a22] hover:text-white">
-              <CalendarDays className="mr-2 inline" size={16} />
+            <Link href="/availability"
+              className="rounded-full border border-[#182a22]/25 px-5 py-3 text-sm font-bold">
               Check Availability
-            </a>
-            <a href="/estimate"
-              className="rounded-full bg-[#182a22] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#466b36]">
+            </Link>
+
+            <Link href="/estimate"
+              className="rounded-full bg-[#182a22] px-6 py-3 text-sm font-bold text-white">
               Get an Estimate <ArrowUpRight className="ml-2 inline" size={16} />
-            </a>
+            </Link>
           </div>
 
-          <button className="rounded-full border border-[#182a22]/20 p-3 lg:hidden" aria-label="Open menu">
-            <Menu size={20} />
+          {/* MOBILE MENU BUTTON */}
+          <button
+            type="button"
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="relative z-[60] rounded-full border border-[#182a22]/20 p-3 lg:hidden"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
+
+        {/* MOBILE NAVIGATION */}
+        {menuOpen && (
+          <div className="absolute left-0 top-full z-50 w-full border-t border-[#182a22]/10 bg-[#f7f7f2] px-6 py-7 shadow-xl lg:hidden">
+            <nav className="flex flex-col gap-6 text-base font-semibold">
+              {[
+                ["Services", "#services"],
+                ["About Us", "#about"],
+                ["How It Works", "#process"],
+                ["Contact", "#contact"],
+              ].map(([label, href]) => (
+                <a
+                  key={label}
+                  href={href}
+                  onClick={() => setMenuOpen(false)}
+                  className="hover:text-[#759d42]"
+                >
+                  {label}
+                </a>
+              ))}
+
+              <div className="mt-2 flex flex-col gap-3 border-t border-[#182a22]/10 pt-6">
+                <Link
+                  href="/availability"
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-full border border-[#182a22]/25 px-6 py-4 text-center"
+                >
+                  Check Availability
+                </Link>
+
+                <Link
+                  href="/estimate"
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-full bg-[#182a22] px-6 py-4 text-center text-white"
+                >
+                  Get an Estimate
+                </Link>
+              </div>
+            </nav>
+          </div>
+        )}
       </header>
 
       {/* HERO */}
